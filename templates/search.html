@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Search for Books or Authors</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    #search-results {
+      margin-top: 20px;
+    }
+    .book {
+      margin-bottom: 15px;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+    }
+    .book strong {
+      font-size: 18px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Search for Books or Authors</h1>
+
+  <!-- Search Form -->
+  <form id="search-form">
+    <input type="text" id="search-input" placeholder="Enter book or author name" required>
+    <button type="submit">Search</button>
+  </form>
+
+  <!-- Area to display search results -->
+  <div id="search-results">
+    <!-- Results will be displayed here -->
+  </div>
+
+  <script>
+    // JavaScript to handle the search form submission
+    document.getElementById('search-form').addEventListener('submit', function(event) {
+      event.preventDefault();  // Prevent the default form submission
+
+      const query = document.getElementById('search-input').value.trim();
+      if (query) {
+        // Make a GET request to the Flask server to search for books or authors
+        fetch(`/search?q=${encodeURIComponent(query)}`)
+          .then(response => response.json())
+          .then(data => {
+            // Clear previous search results
+            const resultsDiv = document.getElementById('search-results');
+            resultsDiv.innerHTML = '';  // Clear any previous results
+
+            // If data contains books, display them
+            if (data.length > 0) {
+              data.forEach(book => {
+                const div = document.createElement('div');
+                div.className = 'book';
+                div.innerHTML = `
+                  <strong>${book.TITLE}</strong> by ${book.AUTHOR_NAME} 
+                  <br>
+                  Rating Count: ${book.RATINGS_COUNT}, Reviews: ${book.TEXT_REVIEWS_COUNT}
+                `;
+                resultsDiv.appendChild(div);
+              });
+            } else {
+              // No books found
+              resultsDiv.innerHTML = '<p>No books or authors found.</p>';
+            }
+          })
+          .catch(error => {
+            console.error('Error fetching books:', error);
+          });
+      } else {
+        alert('Please enter a search term');
+      }
+    });
+  </script>
+
+</body>
+</html>

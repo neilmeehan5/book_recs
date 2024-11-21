@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Book Recommendations</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      margin: 0;
+      box-sizing: border-box;
+    }
+
+    h1 {
+      text-align: center;
+    }
+
+    /* Grid layout for three panels */
+    .container {
+      display: grid;
+      grid-template-columns: 1fr 2fr 1fr;  /* 3 columns, with the middle panel wider */
+      gap: 20px;
+      margin-top: 20px;
+    }
+
+    /* Panel styling */
+    .panel {
+      border: 1px solid #ddd;
+      padding: 15px;
+      border-radius: 8px;
+      background-color: #f9f9f9;
+    }
+
+    /* Styling for search form */
+    #search-form {
+      margin-bottom: 15px;
+    }
+
+    #search-results, #book-list, #tags {
+      margin-top: 20px;
+    }
+
+    .book, .tag {
+      margin-bottom: 10px;
+    }
+
+    .book strong {
+      font-size: 16px;
+    }
+
+    .tag {
+      background-color: #f0f0f0;
+      padding: 5px 10px;
+      border-radius: 5px;
+      display: inline-block;
+      margin-right: 8px;
+    }
+
+  </style>
+</head>
+<body>
+
+  <h1>Book Recommendation App</h1>
+
+  <div class="container">
+    <!-- Left Panel: Book List -->
+    <div id="book-list" class="panel">
+      <h2>Your Book List</h2>
+      <!-- Book list will be displayed here -->
+    </div>
+
+    <!-- Middle Panel: Search and Results -->
+    <div id="search-panel" class="panel">
+      <h2>Search for Books or Authors</h2>
+      <form id="search-form">
+        <input type="text" id="search-input" placeholder="Enter book or author name" required>
+        <button type="submit">Search</button>
+      </form>
+
+      <div id="search-results">
+        <!-- Search results will be displayed here -->
+      </div>
+    </div>
+
+    <!-- Right Panel: Tags associated with the book list -->
+    <div id="tags" class="panel">
+      <h2>Tags for Your Book List</h2>
+      <!-- Tags will be displayed here -->
+    </div>
+  </div>
+
+  <script>
+    // Sample book list and tags (For now, this is static. You can later update it dynamically from the backend)
+    const bookList = [
+      { title: "The Great Gatsby", author: "F. Scott Fitzgerald" },
+      { title: "1984", author: "George Orwell" },
+      { title: "To Kill a Mockingbird", author: "Harper Lee" }
+    ];
+    
+    const tags = ["Fiction", "Classics", "Literature"];
+
+    // Function to display books in the left panel
+    function displayBookList() {
+      const bookListDiv = document.getElementById('book-list');
+      bookListDiv.innerHTML = '<h2>Your Book List</h2>';  // Reset content
+      bookList.forEach(book => {
+        const bookDiv = document.createElement('div');
+        bookDiv.classList.add('book');
+        bookDiv.innerHTML = `<strong>${book.title}</strong> by ${book.author}`;
+        bookListDiv.appendChild(bookDiv);
+      });
+    }
+
+    // Function to display tags in the right panel
+    function displayTags() {
+      const tagsDiv = document.getElementById('tags');
+      tagsDiv.innerHTML = '<h2>Tags for Your Book List</h2>';  // Reset content
+      tags.forEach(tag => {
+        const tagDiv = document.createElement('div');
+        tagDiv.classList.add('tag');
+        tagDiv.textContent = tag;
+        tagsDiv.appendChild(tagDiv);
+      });
+    }
+
+    // Display the book list and tags initially
+    displayBookList();
+    displayTags();
+
+    // JavaScript to handle the search form submission
+    document.getElementById('search-form').addEventListener('submit', function(event) {
+      event.preventDefault();  // Prevent the default form submission
+
+      const query = document.getElementById('search-input').value.trim();
+      if (query) {
+        // Make a GET request to the Flask server to search for books or authors
+        fetch(`/search?q=${encodeURIComponent(query)}`)
+          .then(response => response.json())
+          .then(data => {
+            // Clear previous search results
+            const resultsDiv = document.getElementById('search-results');
+            resultsDiv.innerHTML = '';  // Clear any previous results
+
+            // If data contains books, display them
+            if (data.length > 0) {
+              data.forEach(book => {
+                const div = document.createElement('div');
+                div.className = 'book';
+                div.innerHTML = `
+                  <strong>${book.TITLE}</strong> by ${book.AUTHOR_NAME} 
+                  <br>
+                  Rating Count: ${book.RATINGS_COUNT}, Reviews: ${book.TEXT_REVIEWS_COUNT}
+                `;
+                resultsDiv.appendChild(div);
+              });
+            } else {
+              // No books found
+              resultsDiv.innerHTML = '<p>No books or authors found.</p>';
+            }
+          })
+          .catch(error => {
+            console.error('Error fetching books:', error);
+          });
+      } else {
+        alert('Please enter a search term');
+      }
+    });
+  </script>
+
+</body>
+</html>

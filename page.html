@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Book Recommendation System</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div id="container">
+    <!-- Side Panel for User's Book List -->
+    <div id="sidebar">
+      <h2>Your Book List</h2>
+      <ul id="book-list">
+        <!-- User's added books will appear here -->
+      </ul>
+    </div>
+
+    <!-- Main Content Area -->
+    <div id="main-content">
+      <h1>Welcome to the Book Recommendation System</h1>
+      
+      <!-- Form to add liked book -->
+      <div id="form-container">
+        <label for="liked-book">Enter a book you’ve liked:</label>
+        <input type="text" id="liked-book" name="liked-book">
+        <button id="submit-button">Get Recommendations</button>
+      </div>
+
+      <div id="recommendations">
+        <h2>Recommended Books:</h2>
+        <ul id="recommendation-list">
+          <!-- Book recommendations will be displayed here -->
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
